@@ -3,7 +3,7 @@ all:
 
 install:
 	gcc main.c -o cog
-	sudo mv cog /usr/local/bin/ 
+	mv cog /usr/local/bin/ 
 
 uninstall:
 	sudo rm -rf /usr/local/bin/cog

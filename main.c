@@ -10,30 +10,6 @@ int num_lines = 0;
 int current_line = 0;
 FILE *output_file = NULL;
 char filename[256] = "foo._";
-char version[32] = "unknown";
-
-void load_version(const char *json_file) {
-    FILE *f = fopen(json_file, "r");
-    if (!f) return;
-
-    char line[256];
-    while (fgets(line, sizeof(line), f)) {
-        if (strstr(line, "\"version\"")) {
-            char *start = strchr(line, ':');
-            if (start) {
-                start += 1;
-                while (*start == ' ' || *start == '\"') start++;
-                char *end = strchr(start, '\"');
-                if (end) *end = '\0';
-                strncpy(version, start, sizeof(version) - 1);
-                version[sizeof(version) - 1] = '\0';
-                break;
-            }
-        }
-    }
-
-    fclose(f);
-}
 
 void append() {
     char line[MAX_LEN];
@@ -106,7 +82,6 @@ void delete_current() {
 
 int main(int argc, char *argv[]) {
     system("clear");
-    load_version("manifest.json");
 
     if (argc > 1) {
         strncpy(filename, argv[1], sizeof(filename) - 1);
@@ -134,7 +109,7 @@ int main(int argc, char *argv[]) {
         current_line = num_lines - 1;
     }
 
-    printf("cog %s - simple line editor\n", version);
+    printf("cog 0.2 - simple line editor\n");
     printf("Licensed under the MIT License\n");
     printf("Opened file: %s\n\n", filename);
 
