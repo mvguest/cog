@@ -8,6 +8,10 @@ cog
 *.obj
 *.elf
 
+# Teste files
+test.*
+foo._
+
 # Linker output
 *.ilk
 *.map
