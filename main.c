@@ -153,7 +153,7 @@ int main(int argc, char *argv[]) {
             char *bash_cmd = cmd + 4;
             if (strlen(bash_cmd) > 0) {
                 int result = system(bash_cmd);
-                printf("[exit code: %d]\n", result);
+                printf("\033[90m[exit code: %d]\033[0m\n", result);
             } else {
                 printf("No shell command provided.\n");
             }
@@ -162,6 +162,17 @@ int main(int argc, char *argv[]) {
 
         if (strcmp(cmd, "clear") == 0) {
             system("clear");
+            continue;
+        }
+
+        if (strncmp(cmd, "l.", 2) == 0) {
+            int line = atoi(cmd + 2) - 1;
+            if (line >= 0 && line < num_lines) {
+                current_line = line;
+                printf("Moved to line %d\n", line + 1);
+            } else {
+                printf("Invalid line number.\n");
+            }
             continue;
         }
 
@@ -187,6 +198,19 @@ int main(int argc, char *argv[]) {
                 break;
             case 'q':
                 goto end;
+            case 'w': {
+                FILE *f = fopen(filename, "w");
+                if (!f) {
+                    perror("Failed to save file");
+                } else {
+                    for (int i = 0; i < num_lines; i++) {
+                        fputs(buffer[i], f);
+                    }
+                    fclose(f);
+                    printf("Buffer saved to '%s'\n", filename);
+                }
+                break;
+            }
             case '\0':
                 if (current_line < num_lines - 1) current_line++;
                 break;
@@ -211,6 +235,8 @@ end:
     for (int i = 0; i < num_lines; i++) {
         free(buffer[i]);
     }
+
+    system("clear");
 
     return 0;
 }
