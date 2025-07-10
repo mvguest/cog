@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
 
 #define MAX_LINES 1000
 #define MAX_LEN 256
@@ -80,8 +83,35 @@ void delete_current() {
     }
 }
 
+void os_clear(const char *os) {
+    if (os == "Windows") {
+        printf("\e[1;1H\e[2J");
+    } else {
+        system("clear");
+    }
+}
+
 int main(int argc, char *argv[]) {
-    system("clear");
+    lua_State *L = luaL_newstate(); 
+    luaL_openlibs(L); 
+
+    const char *lua_path = "/usr/local/share/cog-lua/os_detec.lua";
+    if (luaL_dofile(L, lua_path) != LUA_OK) {
+        fprintf(stderr, "Error loading Lua script: %s\n", lua_tostring(L, -1));
+        lua_close(L);
+        return 1;
+    } 
+
+    lua_getglobal(L, "os_detec");
+    if (lua_pcall(L, 0, 1, 0) != LUA_OK) {
+        fprintf(stderr, "Error calling os_detec: %s\n", lua_tostring(L, -1));
+        lua_close(L);
+        return 1;
+    }
+
+    const char *os_name = lua_tostring(L, -1);
+    
+    os_clear(os_name);
 
     if (argc > 1) {
         strncpy(filename, argv[1], sizeof(filename) - 1);
@@ -211,7 +241,8 @@ end:
         free(buffer[i]);
     }
 
-    system("clear");
+    os_clear(os_name);
 
+    lua_close(L); 
     return 0;
 }
