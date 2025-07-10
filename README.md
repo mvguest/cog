@@ -96,6 +96,12 @@ If no filename is provided, the editor uses/creates a default file named foo._.
 
 - No external dependencies besides standard C library.
 
+
+# Compatibility:
+
+cog is compatible with Windows, Linux, MacOS and general Unix systems.
+
+
 # Screenshot:
 
 <a href="https://ibb.co/xqPrgNKH"><img src="https://i.ibb.co/Jj0Sp9WQ/Shot-2025-07-09-200041.png" alt="cog-screenshot" border="0"></a>
