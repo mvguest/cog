@@ -35,9 +35,6 @@ void append() {
         }
 
         buffer[num_lines] = strdup(line);
-        if (output_file) {
-            fputs(line, output_file);
-        }
         num_lines++;
     }
     current_line = num_lines - 1;
@@ -150,9 +147,9 @@ int main(int argc, char *argv[]) {
         filename[sizeof(filename) - 1] = '\0';
     }
 
-    output_file = fopen(filename, "r+");
+    output_file = fopen(filename, "r");
     if (!output_file) {
-        output_file = fopen(filename, "w+");
+        output_file = fopen(filename, "w");
         if (!output_file) {
             perror("Error opening file");
             return 1;
@@ -247,7 +244,9 @@ int main(int argc, char *argv[]) {
                     perror("Failed to save file");
                 } else {
                     for (int i = 0; i < num_lines; i++) {
-                        fputs(buffer[i], f);
+                        if (buffer[i]) {
+                            fputs(buffer[i], f);
+                        }
                     }
                     fclose(f);
                     printf("Buffer saved to '%s'\n", filename);
@@ -273,6 +272,7 @@ int main(int argc, char *argv[]) {
 end:
     if (output_file) {
         fclose(output_file);
+        output_file = NULL;
     }
 
     for (int i = 0; i < num_lines; i++) {
