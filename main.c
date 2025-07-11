@@ -1,9 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
+
+#ifdef __ANDROID__
+    #define LUA_DISABLE
+#else
+    #define LUA_ENABLE
+#endif
+
+#ifdef LUA_ENABLE
+    #include <lua.h>
+    #include <lualib.h>
+    #include <lauxlib.h>
+#endif
 
 #define MAX_LINES 1000
 #define MAX_LEN 256
@@ -84,11 +93,15 @@ void delete_current() {
 }
 
 void os_clear(const char *os) {
-    if (os == "Windows") {
-        printf("\e[1;1H\e[2J");
-    } else {
+    #ifdef LUA_ENABLE
+        if (os == "Windows") {
+            printf("\e[1;1H\e[2J");
+        } else {
+            system("clear");
+        }
+    #else
         system("clear");
-    }
+    #endif
 }
 
 int main(int argc, char *argv[]) {
@@ -139,7 +152,7 @@ int main(int argc, char *argv[]) {
         current_line = num_lines - 1;
     }
 
-    printf("cog 0.2 - simple line editor\n");
+    printf("cog 0.3 - simple line editor\n");
     printf("Licensed under the MIT License\n");
     printf("Opened file: %s\n\n", filename);
 
