@@ -44,7 +44,15 @@ To uninstall:
 $ sudo make uninstall
 ```
 
-#Usage:
+To android devices, run the command:
+(Make sure you have gcc and make installed on your device before run it)
+
+```basg
+$ make android
+```
+
+
+# Usage:
 
 Run the editor optionally with a filename argument:
 

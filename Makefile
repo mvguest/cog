@@ -3,7 +3,10 @@ DEST_FILE = $(DEST_DIR)/os_detec.lua
 DEST_DIR = /usr/local/share/cog-lua
 
 all:
-	@gcc -o cog main.c -llua -lm -ldl
+	@gcc -o cog main.c -llua -lm -ldl -DENABLE_LUA
+
+android:
+	@gcc -o cog main.c -lm -ldl
 
 install:
 	@if [ ! -d "$(DEST_DIR)" ]; then \
@@ -13,7 +16,7 @@ install:
 	@echo "$(LUA_SCRIPT) -> $(DEST_FILE)"
 	@sudo cp $(LUA_SCRIPT) $(DEST_FILE)
 	@echo "Compiling main.c..."
-	@gcc -o cog main.c -llua -lm -ldl
+	@gcc -o cog main.c -llua -lm -ldl -DENABLE_LUA
 	@echo "cog -> /usr/local/bin"
 	@mv cog /usr/local/bin/ 
 	@echo "Installation completed."
