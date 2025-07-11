@@ -24,28 +24,23 @@ FILE *output_file = NULL;
 char filename[256] = "foo._";
 
 void append() {
-    char input[MAX_LEN];
-
-    int insert_at = current_line + 1;
-
+    char line[MAX_LEN];
     while (1) {
-        if (fgets(input, MAX_LEN, stdin) == NULL) break;
-        if (strcmp(input, ".\n") == 0) break;
+        if (fgets(line, sizeof(line), stdin) == NULL) break;
+        if (strcmp(line, ".\n") == 0) break;
 
         if (num_lines >= MAX_LINES) {
             printf("Buffer full.\n");
-            break;
+            return;
         }
 
-        for (int i = num_lines; i > insert_at; i--) {
-            buffer[i] = buffer[i - 1];
+        buffer[num_lines] = strdup(line);
+        if (output_file) {
+            fputs(line, output_file);
         }
-
-        buffer[insert_at] = strdup(input);
-        insert_at++;
         num_lines++;
-        current_line = insert_at - 1;
     }
+    current_line = num_lines - 1;
 }
 
 void modify() {
@@ -176,7 +171,7 @@ int main(int argc, char *argv[]) {
         current_line = num_lines - 1;
     }
 
-    printf("cog 0.4 - simple line editor\n");
+    printf("cog 0.5 - simple line editor\n");
     printf("Licensed under the MIT License\n");
     printf("Opened file: %s\n\n", filename);
 
