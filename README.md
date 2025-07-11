@@ -99,7 +99,7 @@ If no filename is provided, the editor uses/creates a default file named foo._.
 
 # Compatibility:
 
-cog is compatible with Windows, Linux, MacOS and general Unix systems.
+cog is compatible with Windows, Linux, MacOS and general Unix systems. Android systems are included to full compatibility on version 0.3.
 
 
 # Screenshot:
