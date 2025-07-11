@@ -93,38 +93,38 @@ void delete_current() {
 }
 
 void os_clear(const char *os) {
-    #ifdef LUA_ENABLE
-        if (os == "Windows") {
-            printf("\e[1;1H\e[2J");
-        } else {
-            system("clear");
-        }
-    #else
+    if (os == "Windows") {
+        printf("\e[1;1H\e[2J");
+    } else {
         system("clear");
-    #endif
+    }
 }
 
 int main(int argc, char *argv[]) {
-    lua_State *L = luaL_newstate(); 
-    luaL_openlibs(L); 
+    #ifdef LUA_ENABLE
+        lua_State *L = luaL_newstate(); 
+        luaL_openlibs(L); 
 
-    const char *lua_path = "/usr/local/share/cog-lua/os_detec.lua";
-    if (luaL_dofile(L, lua_path) != LUA_OK) {
-        fprintf(stderr, "Error loading Lua script: %s\n", lua_tostring(L, -1));
-        lua_close(L);
-        return 1;
-    } 
+        const char *lua_path = "/usr/local/share/cog-lua/os_detec.lua";
+        if (luaL_dofile(L, lua_path) != LUA_OK) {
+            fprintf(stderr, "Error loading Lua script: %s\n", lua_tostring(L, -1));
+            lua_close(L);
+            return 1;
+        } 
 
-    lua_getglobal(L, "os_detec");
-    if (lua_pcall(L, 0, 1, 0) != LUA_OK) {
-        fprintf(stderr, "Error calling os_detec: %s\n", lua_tostring(L, -1));
-        lua_close(L);
-        return 1;
-    }
+        lua_getglobal(L, "os_detec");
+        if (lua_pcall(L, 0, 1, 0) != LUA_OK) {
+            fprintf(stderr, "Error calling os_detec: %s\n", lua_tostring(L, -1));
+            lua_close(L);
+            return 1;
+        }
 
-    const char *os_name = lua_tostring(L, -1);
-    
-    os_clear(os_name);
+        const char *os_name = lua_tostring(L, -1);
+        
+        os_clear(os_name);
+    #else
+        system("clear");
+    #endif 
 
     if (argc > 1) {
         strncpy(filename, argv[1], sizeof(filename) - 1);
@@ -179,7 +179,11 @@ int main(int argc, char *argv[]) {
         }
 
         if (strcmp(cmd, "clear") == 0) {
-            system("clear");
+            #ifdef LUA_ENABLE
+                os_clear(os_name);
+            #else
+                system("clear");
+            #endif
             continue;
         }
 
@@ -253,9 +257,13 @@ end:
     for (int i = 0; i < num_lines; i++) {
         free(buffer[i]);
     }
+    
+    #ifdef LUA_ENABLE
+        os_clear(os_name);
+        lua_close(L); 
+    #else
+        system("clear");
+    #endif 
 
-    os_clear(os_name);
-
-    lua_close(L); 
     return 0;
 }
