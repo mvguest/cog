@@ -24,23 +24,47 @@ FILE *output_file = NULL;
 char filename[256] = "foo._";
 
 void append() {
-    char line[MAX_LEN];
+    char input[MAX_LEN];
+
+    int insert_at = current_line + 1;
+
     while (1) {
-        if (fgets(line, sizeof(line), stdin) == NULL) break;
-        if (strcmp(line, ".\n") == 0) break;
+        if (fgets(input, MAX_LEN, stdin) == NULL) break;
+        if (strcmp(input, ".\n") == 0) break;
 
         if (num_lines >= MAX_LINES) {
             printf("Buffer full.\n");
-            return;
+            break;
         }
 
-        buffer[num_lines] = strdup(line);
-        if (output_file) {
-            fputs(line, output_file);
+        for (int i = num_lines; i > insert_at; i--) {
+            buffer[i] = buffer[i - 1];
         }
+
+        buffer[insert_at] = strdup(input);
+        insert_at++;
         num_lines++;
+        current_line = insert_at - 1;
     }
-    current_line = num_lines - 1;
+}
+
+void modify() {
+    if (current_line < 0 || current_line >= num_lines) {
+        printf("Invalid current line.\n");
+        return;
+    }
+
+    char input[MAX_LEN];
+    if (fgets(input, MAX_LEN, stdin) != NULL) {
+        input[strcspn(input, "\n")] = '\0'; 
+        free(buffer[current_line]);
+
+        char formatted[MAX_LEN];
+        snprintf(formatted, sizeof(formatted), "%s\n", input);
+
+        buffer[current_line] = strdup(formatted);
+        printf("Line %d modified.\n", current_line + 1);
+    }
 }
 
 void print_current() {
@@ -152,7 +176,7 @@ int main(int argc, char *argv[]) {
         current_line = num_lines - 1;
     }
 
-    printf("cog 0.3 - simple line editor\n");
+    printf("cog 0.4 - simple line editor\n");
     printf("Licensed under the MIT License\n");
     printf("Opened file: %s\n\n", filename);
 
@@ -200,8 +224,10 @@ int main(int argc, char *argv[]) {
 
         switch (cmd[0]) {
             case 'a':
-                fseek(output_file, 0, SEEK_END);
                 append();
+                break;
+            case 'm':
+                modify();
                 break;
             case 'p':
                 print_current();

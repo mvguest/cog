@@ -67,6 +67,8 @@ If no filename is provided, the editor uses/creates a default file named foo._.
 
 ``a`` — Enter insert mode to append new lines. End insert mode by typing a single dot ``.`` on a new line.
 
+``m`` — Modify the current line, removing the old line and replacing a new line insert.
+
 ``p`` — Print the current line.
 
 ``n`` — Print the current line with its line number.
