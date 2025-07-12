@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
 
         lua_getglobal(L, "os_detec");
         if (lua_pcall(L, 0, 1, 0) != LUA_OK) {
-            fprintf(stderr, "[os_detec.lua] - Error calling os_detec: %s\n", lua_tostring(L, -1));
+            fprintf(stderr, "[os_detec.lua] - Error calling os_detec(): %s\n", lua_tostring(L, -1));
             lua_close(L);
             return 1;
         }
@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
 
         lua_getglobal(L, "update");
         if (lua_pcall(L, 0, 1, 0) != LUA_OK) {
-            fprintf(stderr, "[update.lua] - Error calling os_detec: %s\n", lua_tostring(L, -1));
+            fprintf(stderr, "[update.lua] - Error calling update(): %s\n", lua_tostring(L, -1));
             lua_pop(L, 1);
             lua_close(L);
             return 1;
@@ -156,6 +156,14 @@ int main(int argc, char *argv[]) {
         
         lua_pop(L, 1);
         lua_close(L); 
+
+        if (strcmp(c_os, "NUPDT") == 0) {
+            char *yn = malloc(sizeof(char));
+            printf("[ ! ] - Your cog editor is not updated to the latest version\n\n");
+            printf("Do you want to update cog editor to the latest version avaliable? (y/n): ");
+            scanf("%c", yn);
+            free(yn);
+        } 
 
         os_clear(c_os);
     #else
