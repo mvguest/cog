@@ -109,7 +109,7 @@ void delete_current() {
 }
 
 void os_clear(const char *os) {
-    if (os == "Windows") {
+    if (strcmp(os, "Windows") == 0) {
         printf("\e[1;1H\e[2J");
     } else {
         system("clear");
