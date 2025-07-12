@@ -121,23 +121,43 @@ int main(int argc, char *argv[]) {
         lua_State *L = luaL_newstate(); 
         luaL_openlibs(L); 
 
-        const char *lua_path = "/usr/local/share/cog-lua/os_detec.lua";
-        if (luaL_dofile(L, lua_path) != LUA_OK) {
-            fprintf(stderr, "Error loading Lua script: %s\n", lua_tostring(L, -1));
+        const char *lua_os_path = "/usr/local/share/cog-lua/os_detec.lua";
+        if (luaL_dofile(L, lua_os_path) != LUA_OK) {
+            fprintf(stderr, "[os_detec.lua] - Error loading Lua script: %s\n", lua_tostring(L, -1));
             lua_close(L);
             return 1;
         } 
 
         lua_getglobal(L, "os_detec");
         if (lua_pcall(L, 0, 1, 0) != LUA_OK) {
-            fprintf(stderr, "Error calling os_detec: %s\n", lua_tostring(L, -1));
+            fprintf(stderr, "[os_detec.lua] - Error calling os_detec: %s\n", lua_tostring(L, -1));
             lua_close(L);
             return 1;
         }
 
-        const char *os_name = lua_tostring(L, -1);
+        const char *lua_update_path = "/usr/local/share/cog-lua/update.lua"; 
+        if (luaL_dofile(L, lua_update_path) != LUA_OK) {
+            fprintf(stderr, "[update.lua] - Error loading Lua script: %s\n", lua_tostring(L, -1));
+            lua_pop(L, 1);
+            lua_close(L);
+            return 1;
+        }
+
+        lua_getglobal(L, "update");
+        if (lua_pcall(L, 0, 1, 0) != LUA_OK) {
+            fprintf(stderr, "[update.lua] - Error calling os_detec: %s\n", lua_tostring(L, -1));
+            lua_pop(L, 1);
+            lua_close(L);
+            return 1;
+        }
         
-        os_clear(os_name);
+        const char *os_name = lua_tostring(L, -1);
+        char *c_os = strdup(os_name);   
+        
+        lua_pop(L, 1);
+        lua_close(L); 
+
+        os_clear(c_os);
     #else
         system("clear");
     #endif 
@@ -168,7 +188,7 @@ int main(int argc, char *argv[]) {
         current_line = num_lines - 1;
     }
 
-    printf("cog 0.5 - simple line editor\n");
+    printf("cog 0.6 - simple line editor\n");
     printf("Licensed under the MIT License\n");
     printf("Opened file: %s\n\n", filename);
 
@@ -196,7 +216,7 @@ int main(int argc, char *argv[]) {
 
         if (strcmp(cmd, "clear") == 0) {
             #ifdef LUA_ENABLE
-                os_clear(os_name);
+                os_clear(c_os);
             #else
                 system("clear");
             #endif
@@ -280,8 +300,8 @@ end:
     }
     
     #ifdef LUA_ENABLE
-        os_clear(os_name);
-        lua_close(L); 
+        os_clear(c_os);
+        free(c_os);
     #else
         system("clear");
     #endif 
