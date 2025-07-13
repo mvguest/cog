@@ -134,42 +134,39 @@ int main(int argc, char *argv[]) {
             lua_close(L);
             return 1;
         }
+
         const char *os_name = lua_tostring(L, -1);
         char *c_os = strdup(os_name);   
         lua_pop(L, 1); 
 
-
         const char *lua_update_path = "/usr/local/share/cog-lua/update.lua"; 
         if (luaL_dofile(L, lua_update_path) != LUA_OK) {
             fprintf(stderr, "[update.lua] - Error loading Lua script: %s\n", lua_tostring(L, -1));
-            lua_pop(L, 1);
             lua_close(L);
+            free(c_os);
             return 1;
         }
 
         lua_getglobal(L, "update");
         if (lua_pcall(L, 0, 1, 0) != LUA_OK) {
             fprintf(stderr, "[update.lua] - Error calling update(): %s\n", lua_tostring(L, -1));
-            lua_pop(L, 1);
             lua_close(L);
+            free(c_os);
             return 1;
         }
+
         const char *update_result = lua_tostring(L, -1);
-        char *c_update = strdup(update_result);
+        char *c_update = strdup(update_result); 
         lua_pop(L, 1); 
 
-        if (strcmp(c_os, "NUPDT") == 0) {
-            char *yn = malloc(sizeof(char));
-            printf("[ ! ] - Your cog editor is not updated to the latest version\n\n");
-            printf("Do you want to update cog editor to the latest version avaliable? (y/n): ");
-            scanf("%c", yn);
-            free(yn);
-        } 
-
-        free(c_update);
-
-        lua_pop(L, 1);
         lua_close(L); 
+
+        if (strcmp(c_update, "NUPDT") == 0) {
+            char yn;
+            printf("[ ! ] - Your cog editor is not updated to the latest version\n\n");
+            printf("Do you want to update cog editor to the latest version available? (y/n): ");
+            scanf(" %c", &yn);
+        }
 
         os_clear(c_os);
     #else
