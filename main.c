@@ -134,6 +134,10 @@ int main(int argc, char *argv[]) {
             lua_close(L);
             return 1;
         }
+        const char *os_name = lua_tostring(L, -1);
+        char *c_os = strdup(os_name);   
+        lua_pop(L, 1); 
+
 
         const char *lua_update_path = "/usr/local/share/cog-lua/update.lua"; 
         if (luaL_dofile(L, lua_update_path) != LUA_OK) {
@@ -150,12 +154,9 @@ int main(int argc, char *argv[]) {
             lua_close(L);
             return 1;
         }
-        
-        const char *os_name = lua_tostring(L, -1);
-        char *c_os = strdup(os_name);   
-        
-        lua_pop(L, 1);
-        lua_close(L); 
+        const char *update_result = lua_tostring(L, -1);
+        char *c_update = strdup(update_result);
+        lua_pop(L, 1); 
 
         if (strcmp(c_os, "NUPDT") == 0) {
             char *yn = malloc(sizeof(char));
@@ -164,6 +165,11 @@ int main(int argc, char *argv[]) {
             scanf("%c", yn);
             free(yn);
         } 
+
+        free(c_update);
+
+        lua_pop(L, 1);
+        lua_close(L); 
 
         os_clear(c_os);
     #else
