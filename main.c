@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
             scanf(" %c", &yn);
             switch (yn) {
                 case 'y':
-                    system("git clone https://github.com/mvguest/cog.git")
+                    system("git clone https://github.com/mvguest/cog.git");
                     puts("The latest git repo of cog was cloned on your current directory");
                     puts("Follow the instructions on the documentation to update to a new version");
                     scanf("Press <ENTER> to continue...");
