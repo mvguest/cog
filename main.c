@@ -166,6 +166,18 @@ int main(int argc, char *argv[]) {
             printf("[ ! ] - Your cog editor is not updated to the latest version\n\n");
             printf("Do you want to update cog editor to the latest version available? (y/n): ");
             scanf(" %c", &yn);
+            switch (yn) {
+                case 'y':
+                    system("git clone https://github.com/mvguest/cog.git")
+                    puts("The latest git repo of cog was cloned on your current directory");
+                    puts("Follow the instructions on the documentation to update to a new version");
+                    scanf("Press <ENTER> to continue...");
+                    break;
+                case 'n':
+                    break;
+                default:
+                    break;
+            }
         }
 
         os_clear(c_os);
