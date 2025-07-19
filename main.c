@@ -137,48 +137,9 @@ int main(int argc, char *argv[]) {
 
         const char *os_name = lua_tostring(L, -1);
         char *c_os = strdup(os_name);   
+
         lua_pop(L, 1); 
-
-        const char *lua_update_path = "/usr/local/share/cog-lua/update.lua"; 
-        if (luaL_dofile(L, lua_update_path) != LUA_OK) {
-            fprintf(stderr, "[update.lua] - Error loading Lua script: %s\n", lua_tostring(L, -1));
-            lua_close(L);
-            free(c_os);
-            return 1;
-        }
-
-        lua_getglobal(L, "update");
-        if (lua_pcall(L, 0, 1, 0) != LUA_OK) {
-            fprintf(stderr, "[update.lua] - Error calling update(): %s\n", lua_tostring(L, -1));
-            lua_close(L);
-            free(c_os);
-            return 1;
-        }
-
-        const char *update_result = lua_tostring(L, -1);
-        char *c_update = strdup(update_result); 
-        lua_pop(L, 1); 
-
         lua_close(L); 
-
-        if (strcmp(c_update, "NUPDT") == 0) {
-            char yn;
-            printf("[ ! ] - Your cog editor is not updated to the latest version\n\n");
-            printf("Do you want to update cog editor to the latest version available? (y/n): ");
-            scanf(" %c", &yn);
-            switch (yn) {
-                case 'y':
-                    system("git clone https://github.com/mvguest/cog.git");
-                    puts("The latest git repo of cog was cloned on your current directory");
-                    puts("Follow the instructions on the documentation to update to a new version");
-                    scanf("Press <ENTER> to continue...");
-                    break;
-                case 'n':
-                    break;
-                default:
-                    break;
-            }
-        }
 
         os_clear(c_os);
     #else
@@ -211,7 +172,7 @@ int main(int argc, char *argv[]) {
         current_line = num_lines - 1;
     }
 
-    printf("cog 0.6 - simple line editor\n");
+    printf("cog 0.7 - simple line editor\n");
     printf("Licensed under the MIT License\n");
     printf("Opened file: %s\n\n", filename);
 

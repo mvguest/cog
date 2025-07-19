@@ -3,9 +3,6 @@ DEST_DIR = /usr/local/share/cog-lua
 LUA_OS_SCRIPT = lua/os_detec.lua
 LUA_OS_DEST = $(DEST_DIR)/os_detec.lua
 
-LUA_UPDATE_SCRIPT = lua/update.lua
-LUA_UPDATE_DEST = $(DEST_DIR)/update.lua
-
 all:
 	@gcc -o cog main.c -llua -lm -ldl -DENABLE_LUA
 
@@ -26,7 +23,6 @@ winstall:
 	) && \
 	echo Copying Lua scripts... && \
 	copy $(LUA_OS_SCRIPT) $$LUA_DIR\\os_detec.lua >nul && \
-	copy $(LUA_UPDATE_SCRIPT) $$LUA_DIR\\update.lua >nul && \
 	echo Compiling main.c... && \
 	gcc -o cog.exe main.c -llua -lm -ldl -DENABLE_LUA && \
 	move cog.exe $$DEST_WIN >nul && \
@@ -40,8 +36,6 @@ install:
 	@echo "Loading Lua files..."
 	@echo "$(LUA_OS_SCRIPT) -> $(LUA_OS_DEST)"
 	@cp $(LUA_OS_SCRIPT) $(LUA_OS_DEST)
-	@echo "$(LUA_UPDATE_SCRIPT) -> $(LUA_UPDATE_DEST)"
-	@cp $(LUA_UPDATE_SCRIPT) $(LUA_UPDATE_DEST)
 	@echo "Compiling main.c..."
 	@gcc -o cog main.c -llua -lm -ldl -DENABLE_LUA
 	@echo "cog -> /usr/local/bin"
